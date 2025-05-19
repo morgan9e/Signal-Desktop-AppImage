@@ -1,7 +1,6 @@
 name: Build
 
 on:
-  push:
   repository_dispatch:
     types: [external_build_trigger]
   workflow_dispatch:
@@ -22,9 +21,8 @@ jobs:
       run: |
         LATEST_TAG="${{ steps.get_tag.outputs.LATEST_TAG }}"
         MY_RELEASE=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.tag_name')
-        if [[ -z "$MY_RELEASE" || "$MY_RELEASE" == "null" || "$LATEST_TAG" == "$MY_RELEASE" ]]; then
-          echo "Me: $MY_RELEASE, Target: $LATEST_TAG"
-          exit 1
+        if [[ "$LATEST_TAG" == "$MY_RELEASE" ]]; then
+          exit 78
         fi
   
     - uses: actions/checkout@v4
@@ -41,7 +39,7 @@ jobs:
     - name: Add AppImage
       run: |
         cp package.json package.json.orig
-        cat package.json.orig | jq '.build.linux.target = ["AppImage"]' > package.json
+        cat package.json.orig | jq '.build.linux.target = ["AppImage", "tar.gz"]' > package.json
         
     - name: Read .nvmrc
       run: echo "NODE_VERSION=$(cat .nvmrc)" >> $GITHUB_OUTPUT
@@ -63,5 +61,7 @@ jobs:
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v4.6.2
       with:
+        name: signal-desktop-${{ steps.get_tag.outputs.LATEST_TAG }}
         path: |
           release/*.AppImage
+          release/*.tar.gz
