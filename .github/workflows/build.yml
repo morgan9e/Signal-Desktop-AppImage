@@ -1,6 +1,7 @@
 name: Build
 
 on:
+  push:
   repository_dispatch:
     types: [external_build_trigger]
   workflow_dispatch:
