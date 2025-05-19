@@ -61,7 +61,7 @@ jobs:
       run: |
         pnpm install
         pnpm build-release
-        echo "FILE=$(basename $(ls release/*.AppImage | tail -n 1)" >> $GITHUB_OUTPUT
+        echo "FILE=\$(basename \$(ls release/*.AppImage | tail -n 1)" >> $GITHUB_OUTPUT
         
     - name: Create Release
       id: create_release
