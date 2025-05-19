@@ -42,7 +42,7 @@ jobs:
       run: |
         cp package.json package.json.0
         cat package.json.0 | jq '.build.linux.target  = ["AppImage"]' > package.json.1
-        cat package.json.1 | jq '.build.appimage.publish = []' > package.json
+        cat package.json.1 | jq '.build.appImage.publish = []' > package.json
         
     - name: Read .nvmrc
       run: echo "NODE_VERSION=$(cat .nvmrc)" >> $GITHUB_OUTPUT
