@@ -7,7 +7,6 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "0 0 * * *"
-    
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -38,10 +37,10 @@ jobs:
         sudo apt update
         sudo apt install -y jq python3 
 
-    - name: Add AppImage
+    - name: Modify package.json
       run: |
-        cp package.json package.json.orig
-        cat package.json.orig | jq '.build.linux.target = ["AppImage"]' > package.json
+        cat package.json | jq '.build.linux.target  = ["AppImage"]' > package.json
+        cat package.json | jq '.build.linux.publish = ["none"]' > package.json
         
     - name: Read .nvmrc
       run: echo "NODE_VERSION=$(cat .nvmrc)" >> $GITHUB_OUTPUT
@@ -58,7 +57,7 @@ jobs:
     - name: Build
       run: |
         pnpm install
-        pnpm build --publish=never
+        pnpm build
         
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v4.6.2
