@@ -58,7 +58,7 @@ jobs:
     - name: Build
       run: |
         pnpm install
-        pnpm build
+        pnpm build --publish=never
         
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v4.6.2
