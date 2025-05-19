@@ -60,9 +60,25 @@ jobs:
       run: |
         pnpm install
         pnpm build-release
-        
-    - name: Upload Build Artifacts
-      uses: actions/upload-artifact@v4.6.2
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
       with:
-        path: |
-          release/*.AppImage
+        draft: false
+        prerelease: false
+        release_name: ${{ steps.get_tag.outputs.LATEST_TAG }}
+        tag_name: ${{ steps.get_tag.outputs.LATEST_TAG }}
+
+      
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: release/Signal-${{ steps.get_tag.outputs.LATEST_TAG }}.AppImage
+        asset_name: Signal-${{ steps.get_tag.outputs.LATEST_TAG }}.AppImage
