@@ -7,6 +7,7 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "0 0 * * *"
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -39,8 +40,9 @@ jobs:
 
     - name: Modify package.json
       run: |
-        cat package.json | jq '.build.linux.target  = ["AppImage"]' > package.json
-        cat package.json | jq '.build.linux.publish = ["none"]' > package.json
+        cp package.json package.json.0
+        cat package.json.0 | jq '.build.linux.target  = ["AppImage"]' > package.json.1
+        cat package.json.1 | jq '.build.linux.publish = ["none"]' > package.json
         
     - name: Read .nvmrc
       run: echo "NODE_VERSION=$(cat .nvmrc)" >> $GITHUB_OUTPUT
