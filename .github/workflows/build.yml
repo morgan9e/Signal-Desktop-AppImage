@@ -1,0 +1,46 @@
+name: Build
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install jq
+      run: |
+        apt update
+        apt install -y jq
+
+    - name: Add AppImage
+      run: |
+        cp package.json package.json.orig
+        cat package.json.orig | jq '.build.linux.target = ["AppImage", "tar.gz"]' > package.json
+        
+    - name: Read .nvmrc
+      run: echo ::set-output name=NODE_VERSION::$(cat .nvmrc)
+      id: nvm
+    
+    - name: Use Node.js ${{ steps.nvm.outputs.NODE_VERSION }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ steps.nvm.outputs.NODE_VERSION }}
+    
+    - name: Build
+      run: |
+        npm install pnpm
+        pnpm build --platform linux
+
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: linux-build
+        path: |
+          release/*.AppImage
+          release/*.tar.gz
+
