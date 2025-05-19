@@ -47,7 +47,7 @@ jobs:
         pnpm build --platform linux
         
     - name: Upload Build Artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4.6.2
       with:
         name: signal-desktop-${{ steps.get_tag.outputs.LATEST_TAG }}
         path: |
