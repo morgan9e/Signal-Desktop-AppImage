@@ -46,6 +46,7 @@ jobs:
     
     - name: Build
       run: |
+        pnpm install
         pnpm build --platform linux
         
     - name: Upload Build Artifacts
